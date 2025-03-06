@@ -1,0 +1,15 @@
+create function gravity_acceleration(stream accelerometer) -> Stream of Number
+  as select Stream of sqrt(sum(g .^ 2))
+       from Vector of Number g
+      where g in accelerometer;
+
+
+create function shake_state(stream accelerometer) -> Stream of Number
+  as select Stream of shakes
+       from Number shakes, Number elem
+      where elem in stdev(winagg(gravity_acceleration(accelerometer), 50, 5))
+        and shakes = case when elem > 5 then 1
+                          else 0 end;
+
+create function shakes(stream accelerometer) -> Stream of Number
+  as changed(shake_state(cast(accelerometer as stream of vector of number)));

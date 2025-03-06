@@ -1,0 +1,7 @@
+load_osql(models:folder("detect-shake") + "shake.osql");
+
+validate "no shake"
+    check vectorof(shakes(csv:file_stream(models:folder("detect-shake") + "test-data/not-shaking.csv", "read"))) => [0];
+
+validate "shake"
+    check vectorof(shakes(csv:file_stream(models:folder("detect-shake") + "test-data/shaking.csv", "read"))) => [1];

@@ -1,0 +1,16 @@
+create function fake_accelerometer() -> stream of vector of number 
+as select stream of case when sin(h) > 0 then 
+               [frand(-0.5,0.5), 
+                frand(-0.5,0.5),
+                frand(8.5,9.5)]
+              else
+                [frand(0,30), 
+                 frand(0,30),
+                 frand(0,30)]
+              end
+           from number h 
+           where h in heartbeat(0.03);
+
+create function recorded_accelerometer() -> stream of vector of number
+as concat(csv:file_stream(models:folder("detect-shake") + "test-data/not-shaking.csv", "read", 0.03),
+          csv:file_stream(models:folder("detect-shake") + "test-data/shaking.csv", "read", 0.03));
