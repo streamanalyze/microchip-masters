@@ -1,0 +1,84 @@
+// **************************************
+// Lab session 1b
+// The detect shake model
+// *************************
+
+//Run each query by plaving the curser on the query and press Shift-return
+
+//To verify that the edge device is connected we use listening_edges() function. 
+//Your edge device should be listed in the result.
+listening_edges()
+
+
+//Send a query to the edge using edge_cq()
+edge_cq("edge1", "1+1");
+
+
+//Let's use a simpler form using peer
+//peer: edge1
+1+1;
+
+//Check for available sensor on the edge device
+//peer: edge1
+signals();
+
+//We can use signal_stream('accelerometer') to display the accelerometer stream.
+//peer: edge1
+//plot: Line plot
+signal_stream('accelerometer');
+
+
+//Develop the model
+
+//Create a function to 
+//peer: edge1
+create function gravity_acceleration() -> Stream of Number
+  as select Stream of sqrt(sum(g .^ 2))
+       from Vector of Number g
+      where g in signal_stream("accelerometer");
+
+//peer: edge1
+//plot: Line plot
+gravity_acceleration();
+
+
+//Create "a window" over the stream and compute the standard deviation 
+//peer: edge1
+//plot: Line plot
+stdev(winagg(gravity_acceleration(), 50, 5));
+
+
+//Now we use the stddev() expression to create a function that signals 
+//if the shaking is above some threshold
+//peer:edge1
+create function shake_state(Number threshold) -> Stream of Number
+  as select Stream of shakes
+       from Number shakes, Number elem
+      where elem in stdev(winagg(gravity_acceleration(), 50, 5))
+        and shakes = case when elem > threshold then 1
+                          else 0 end;
+
+
+
+//peer: edge1
+//plot: Line plot
+shake_state(5);
+
+
+//peer: edge1
+create function shakes(Number threshold) -> Stream of Number
+  as changed(shake_state(threshold));
+
+//peer: edge1
+shakes(5);
+
+
+//Let's add som post processing
+//peer: edge1
+create function detect_shake(Number threshold) -> Stream of Vector
+  as select Stream of [timeval(rnow()),this_peerid(),sh]
+       from Number sh
+      where sh in shakes(threshold);
+
+//peer: edge1
+detect_shake(5)
