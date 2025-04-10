@@ -1,0 +1,26 @@
+_pp:register_flow("sama","python3 "+file:current_folder()+"pump_accel_click.py", "basic");
+
+create type sama:signal under Signal;
+
+create function sama_stream(sama:signal s) -> Stream of Timeval of Vector of Number
+  as select Stream of ts(timeval(ts),value)
+       from Charstring row, Vector data, Number ts,
+            Charstring flow, vector of Number value
+    where flow = options(s)["flow"]
+      and row in subscribe("sama:"+flow)
+      and data = csv:from_string(row)
+      and value = skip(data,2)
+      and ts = data[2];
+
+create sama:signal (name, options)
+  instances
+  ("accelerometer",   {"flow": "a"}),
+  ("gyroscope",       {"flow": "g"}),
+  ("temperature",     {"flow": "t"}),
+  ("pressure",        {"flow": "p"}),
+  ("humidity",        {"flow": "h"});
+
+
+for each sama:signal s {
+  set ts_signal_stream(s) = sama_stream(s);
+};
