@@ -1,4 +1,4 @@
-_pp:register_flow("sama","python3 "+file:current_folder()+"pump_accel_click.py", "basic");
+_pp:register_flow("sama","python3 "+file:current_folder()+"SAMA_sensor_pump.py", "basic");
 
 create type sama:signal under Signal;
 
