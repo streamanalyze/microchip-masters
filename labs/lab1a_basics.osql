@@ -1,0 +1,64 @@
+// **************************************
+// Lab session 1a
+// Examples of basic functions in OSQL
+// **************************************
+
+// Mathematical functions
+1+1;
+
+3*4;
+
+sin(0.4);
+
+sqrt(8);
+
+// Create a function
+create function ctof(Real c) -> Real
+  /* Convert a Celsius degree `c` to Fahrenheit */
+  as c * 9 / 5 + 32;
+
+// Call the function
+ctof(10);
+
+// Vectors
+set :my_vector = [1,2,3,4];
+
+:my_vector +1;
+
+sum(:my_vector);
+
+// SQL queries
+
+create table TrainingSession(id Integer,
+                             name Charstring, 
+                             unique(id));
+
+insert into TrainingSession values (1, 'SA Engine Intro'),
+                              (2, 'OSQL queries and streams'),
+                              (3, 'Understanding and modeling data');
+
+select * from TrainingSession;
+
+select t.name
+from TrainingSession t
+where t.id = 1;
+
+// some functions that create synthetic streams
+heartbeat(1);
+
+// A query theat takes a stream and outputs a stream
+// - a continouos query, CQ
+
+//plot: Line plot
+select sin(10*x)
+  from Number x
+ where x in heartbeat(0.05);
+
+simstream(0.1);
+
+// a CQ that acts as a filter
+//plot: Line plot
+select Stream of x
+  from Number x
+ where x in simstream(0.01)
+   and x > 0.7;

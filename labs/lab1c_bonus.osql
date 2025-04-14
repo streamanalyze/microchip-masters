@@ -1,0 +1,29 @@
+// **************************************
+// Lab session 1c (BONUS SESSION)
+// Organize OSQL in models
+// **************************************
+
+// When using OSQL in production, analysis functions are organized in models
+// Take a look at models/detect_shake for an example
+// It contains the shake detection as well as simulation functions that enable unit testing
+
+// Load the model to make the function in it available
+// Loading a model will execute its master.osql file
+models:load('detect-shake');
+
+// Run the model by calling any of the loaded functions
+
+//plot: line plot
+fake_accelerometer();
+
+//plot: line plot
+gravity_acceleration(fake_accelerometer());
+
+shake_state(fake_accelerometer());
+
+shakes(fake_accelerometer());
+
+// To run a model at the edge, it is deployed
+
+
+// Now run it:

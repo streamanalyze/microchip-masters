@@ -1,0 +1,9 @@
+// **************************************
+// Lab session 2a
+// Sensor fusion with OSQL
+// **************************************
+
+// Recall the available signals on the board
+//peer: edge1
+signals();
+
