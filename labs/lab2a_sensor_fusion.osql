@@ -3,7 +3,44 @@
 // Sensor fusion with OSQL
 // **************************************
 
+models:load("recorded-signals");
+
 // Recall the available signals on the board
-//peer: edge1
 signals();
 
+// As we did when detecting shakes, we can plot each signal
+
+// Note: it is recommended practice to stop a query before starting the next one
+// to limit the amount of parallel queries
+
+//plot: Line plot
+signal_stream('accelerometer');
+
+//plot: Line plot
+signal_stream('temperature');
+
+// To combine the signals from the sensors, use pivot
+// pivot will tranform a vector of streams into a stream of vectors
+// If one stream is slower than the other, values will be duplicated
+pivot([signal_stream('accelerometer'), signal_stream('temperature')]);
+
+// We can flatten the output to plot the signals in the same graph
+//plot: line plot
+flatten(pivot([signal_stream('accelerometer'), signal_stream('temperature')]));
+
+// Or use a multiplot 
+//plot: multi plot
+{
+  "sa_plots": [
+    {"sa_plot": "Line plot", "labels": ["x","y","z"]},
+    {"sa_plot": "Line plot", "labels": ["temperature"]}
+  ],
+  "labels": ["x","y","z","temperature"]
+};
+flatten(pivot([signal_stream('accelerometer'), signal_stream('temperature')]));
+
+// **************************************
+// Exercise!
+// **************************************
+
+// Create a plot that shows temperature, humidity and pressure in one graph

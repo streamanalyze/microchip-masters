@@ -1,0 +1,19 @@
+create type simu:signal under Signal;
+
+create function simu_stream(simu:signal s) -> Stream of Timeval of Vector of Number
+  as select Stream of ts(row)
+       from Vector row, Charstring file
+    where file = models:folder("recorded-signals") + options(s)["file"]
+      and row in csv:file_stream(file, "read", 0.03);
+
+create simu:signal (name, options)
+  instances
+  ("accelerometer",   {"file": "accelerometer.csv"}),
+  ("gyroscope",       {"file": "g"}),
+  ("temperature",     {"file": "temperature1.csv"}),
+  ("pressure",        {"file": "pressure1.csv"}),
+  ("humidity",        {"file": "humidity1.csv"});
+
+for each simu:signal s {
+  set ts_signal_stream(s) = simu_stream(s);
+};
