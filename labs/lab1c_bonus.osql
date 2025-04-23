@@ -31,7 +31,7 @@ models:deploy(["edge1"], "detect-shake");
 shakes(signal_stream("accelerometer"));
 
 // **************************************
-// OSQL Exercises
+// OSQL Exercises: Queries and Streams
 // **************************************
 
 // This section contains exercises for learning to write your own queries

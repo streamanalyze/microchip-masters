@@ -1,0 +1,43 @@
+// **************************************
+// Lab session 2b
+// Statistics on streams
+// **************************************
+
+// Continous queries enables operations on each element of infinite streams:
+
+// Gravity acceleration query:
+//plot: Line plot
+select Stream of sqrt(sum(g .^ 2))
+       from Vector of Number g
+      where g in signal_stream("accelerometer");
+
+// To do operations, such as caluclating statistics, on several elements
+// windows can be used. The function twinagg created a time-based window
+// with size and stride defined in seconds.
+
+// A tumbling window
+select a
+from timeval of vector a
+where a in twinagg(ts_signal_stream("accelerometer"), 0.1, 0.1);
+
+// a sliding window
+select a
+from timeval of vector a
+where a in twinagg(ts_signal_stream("accelerometer"), 0.2, 0.1);
+
+// transposing the value gives one vector for each direction [x,x,x],[y,y,y],[z,z,z], 
+// rather than vectors of [x,y,z],[x,y,z],[x,y,z]
+select t
+from timeval of vector a, matrix vv, matrix t
+where a in twinagg(ts_signal_stream("accelerometer"), 0.2, 0.1)
+and vv = value(a)
+and t = transpose(vv);
+
+// by calculating the average in each dimension, we get a sliding average - a smoothing
+//plot: Line plot
+select avg(t[1]),avg(t[2]),avg(t[3])
+from timeval of vector a, matrix vv, matrix t
+where a in twinagg(ts_signal_stream("accelerometer"), 0.2, 0.1)
+and vv = value(a)
+and t = transpose(vv);
+
