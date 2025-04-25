@@ -1,0 +1,38 @@
+// To walk through these labs without access to SAMA board or sensors,
+// eg. if repeating the class at home
+
+// Load the recorded-signals model
+models:load("recorded-signals");
+
+// You can now step thorugh the labs as if signals existed, but with recorded data
+
+signals();
+
+//plot: Line plot
+signal_stream('accelerometer');
+
+//plot: Line plot
+signal_stream('gyroscope');
+
+//plot: Line plot
+signal_stream('humidity');
+
+//plot: Line plot
+signal_stream('temperature');
+
+//plot: Line plot
+signal_stream('pressure');
+
+//plot: multi plot
+{
+  "sa_plots": [
+    {"sa_plot": "Line plot", "labels": ["acc x","acc y","acc z"]},
+    {"sa_plot": "Line plot", "labels": ["gyr x","gyr y","gyr z"]},
+    {"sa_plot": "Line plot", "labels": ["temperature"]},
+    {"sa_plot": "Line plot", "labels": ["humidity"]},
+    {"sa_plot": "Line plot", "labels": ["pressure"]}
+  ],
+  "labels": ["acc x","acc y","acc z","gyr x","gyr y","gyr z","temperature","humidity","pressure"]
+};
+flatten(pivot([signal_stream('accelerometer'), signal_stream('gyroscope'), 
+signal_stream('temperature'),signal_stream('humidity'),signal_stream('pressure')]));

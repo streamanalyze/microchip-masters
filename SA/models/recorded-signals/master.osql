@@ -8,11 +8,11 @@ create function simu_stream(simu:signal s) -> Stream of Timeval of Vector of Num
 
 create simu:signal (name, options)
   instances
-  ("accelerometer",   {"file": "accelerometer.csv"}),
-  ("gyroscope",       {"file": "g"}),
-  ("temperature",     {"file": "temperature1.csv"}),
-  ("pressure",        {"file": "pressure1.csv"}),
-  ("humidity",        {"file": "humidity1.csv"});
+  ("accelerometer",   {"file": "acc3.csv"}),
+  ("gyroscope",       {"file": "gyr3.csv"}),
+  ("temperature",     {"file": "tem3.csv"}),
+  ("pressure",        {"file": "pre3.csv"}),
+  ("humidity",        {"file": "hum3.csv"});
 
 for each simu:signal s {
   set ts_signal_stream(s) = simu_stream(s);

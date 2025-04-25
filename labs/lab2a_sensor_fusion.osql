@@ -3,8 +3,6 @@
 // Sensor fusion with OSQL
 // **************************************
 
-models:load("recorded-signals");
-
 // Recall the available signals on the board
 signals();
 
