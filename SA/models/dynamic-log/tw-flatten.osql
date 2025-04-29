@@ -1,0 +1,81 @@
+// helper functions //////////////////////////////////////////////////////
+
+create function rlargest(Stream s) -> Stream
+/* Output every time a new max is found in the stream. */
+  as changed(rmax(s));
+set_resulttypes("rlargest", "first-resulttypes");
+
+
+create function twflatten(Stream of Timeval of Vector s) -> Stream of Timeval
+/* Flatten a twinagg output stream.
+   
+   This function takes a stream of timeval of vector of timeval (window of timestamped
+   signals), e.g.,
+    
+       ts(|2022-03-07T23:10:17.100Z|, [ts(|2022-03-07T23:10:16.900Z|, [101,201,301]),
+                                       ts(|2022-03-07T23:10:17.000Z|, [102,202,302]),
+                                       ts(|2022-03-07T23:10:17.100Z|, [103,203,303])])
+       ts(|2022-03-07T23:10:17.200Z|, [ts(|2022-03-07T23:10:17.000Z|, [102,202,302]),
+                                       ts(|2022-03-07T23:10:17.100Z|, [103,203,303]),
+                                       ts(|2022-03-07T23:10:17.200Z|, [104,204,304])])
+       ...
+    
+   and "flattens" it to return the timevals in each vector. So in the above
+   example we would get
+    
+       ts(|2022-03-07T23:10:16.900Z|, [101,201,301])
+       ts(|2022-03-07T23:10:17.000Z|, [102,202,302])
+       ts(|2022-03-07T23:10:17.100Z|, [103,203,303])
+       ts(|2022-03-07T23:10:17.000Z|, [102,202,302])
+       ts(|2022-03-07T23:10:17.100Z|, [103,203,303])
+       ts(|2022-03-07T23:10:17.200Z|, [104,204,304])
+   
+*/
+  as select stream of ts
+      from Timeval of Vector window, Vector of Timeval vt, Timeval ts
+      where window in s
+        and vt = value(window)
+        and ts in vt;
+
+
+create function tsmoninc(Stream of Timeval of Vector s) -> Stream of Timeval
+/* Filter stream to output only monotonically increasing timestamped values.
+   
+   From a stream of windows of timestamped values, only emit the timestamped values with
+   monotonically increasing time order.
+   
+   This function takes a stream of timeval of vector of timeval (window of timestamped
+   signals), e.g.,
+    
+       ts(|2022-03-07T23:10:17.100Z|, [ts(|2022-03-07T23:10:16.900Z|, [101,201,301]),
+                                       ts(|2022-03-07T23:10:17.000Z|, [102,202,302]),
+                                       ts(|2022-03-07T23:10:17.100Z|, [103,203,303])])
+       ts(|2022-03-07T23:10:17.200Z|, [ts(|2022-03-07T23:10:17.000Z|, [102,202,302]),
+                                       ts(|2022-03-07T23:10:17.100Z|, [103,203,303]),
+                                       ts(|2022-03-07T23:10:17.200Z|, [104,204,304])])
+       ...
+    
+   and returns each timeval in the vector in monotonically increasing order. So in the above
+   example we would get
+    
+       ts(|2022-03-07T23:10:16.900Z|, [101,201,301])
+       ts(|2022-03-07T23:10:17.000Z|, [102,202,302])
+       ts(|2022-03-07T23:10:17.100Z|, [103,203,303])
+       ts(|2022-03-07T23:10:17.200Z|, [104,204,304])
+    
+    which means that although some values are represented more than once in the original
+    stream, e.g., ts(|2022-03-07T23:10:17.000Z|, [102,202,302]) which is represented twice,
+    each value will only be represented once in the output.
+    
+    The function basically checks what was the latest timestamp and will only emit results
+    with timestamps coming after that.
+    */
+  as rlargest(twflatten(s));
+
+
+create function twmoninc(Stream of Timeval s, Real size, Function fn, Vector args)
+/* Triggered twinagg with monotonically increasing result. */
+                -> Stream of Timeval
+  as select tsmoninc(windowed_stream)                            // flatten result
+       from Stream of Timeval of Vector windowed_stream
+      where windowed_stream = twinagg(s, size, true, fn, args);  // regular twinagg

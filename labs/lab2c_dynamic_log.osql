@@ -1,0 +1,80 @@
+// **************************************
+// Lab session 2b
+// Dynamic logging
+// **************************************
+
+// Consider our signals:
+
+create function all_sensors() -> stream of timeval of vector
+as ts(flatten(pivot([signal_stream('accelerometer'), signal_stream('gyroscope'), 
+signal_stream('temperature'),signal_stream('humidity'),signal_stream('pressure')])));
+
+//plot: multi plot
+{
+  "sa_plots": [
+    {"sa_plot": "Line plot", "labels": ["acc x","acc y","acc z"]},
+    {"sa_plot": "Line plot", "labels": ["gyr x","gyr y","gyr z"]},
+    {"sa_plot": "Line plot", "labels": ["temperature"]},
+    {"sa_plot": "Line plot", "labels": ["humidity"]},
+    {"sa_plot": "Line plot", "labels": ["pressure"]}
+  ],
+  "labels": ["acc x","acc y","acc z","gyr x","gyr y","gyr z","temperature","humidity","pressure"]
+};
+value(all_sensors());
+
+// So far we have used a predefined stride, eg. 0.1 seconds, between windows
+// twinagg also allows for conditional windows:
+// a predicate function is passed to twinagg, 
+// which returns a window whenever the predicate is true
+
+// An example of a predicate function 
+// checks if the first signal is above a provided threshold
+create function my_predicate(timeval tv, vector params) -> boolean
+  as value(tv)[1] > params[1];
+
+// Test: below 5 - returns null
+my_predicate(ts([2,1,1]), [5]);
+
+// Test: above 5 - returns True
+my_predicate(ts([7,1,1]), [5]);
+
+// in all_sensors(), humidity is the eigth column
+// create a predicate that checks if humidity is above threshold
+create function humidity_above(timeval of vector tv, vector params) -> boolean
+  as value(tv)[8] > params[1];
+
+// Try running this query, and blowing on the humidity sensor
+// Notice we will only get windows when raising humidity
+twinagg(all_sensors(), 0.1, #'humidity_above', [30]);
+
+// Once humidity is above the threshold it will remain so for a while,
+// resulting in many windows with overlapping content
+// To flatten and reduce the windows, load functions from the dynamic-log model
+
+models:load('dynamic-log');
+
+// we can now use twinagg with monotically increasing timestamps:
+// duplicate entries are removed
+twmoninc(all_sensors(), 0.1, #'humidity_above', [30]);
+
+//plot: multi plot
+{
+  "sa_plots": [
+    {"sa_plot": "Line plot", "labels": ["acc x","acc y","acc z"]},
+    {"sa_plot": "Line plot", "labels": ["gyr x","gyr y","gyr z"]},
+    {"sa_plot": "Line plot", "labels": ["temperature"]},
+    {"sa_plot": "Line plot", "labels": ["humidity"]},
+    {"sa_plot": "Line plot", "labels": ["pressure"]}
+  ],
+  "labels": ["acc x","acc y","acc z","gyr x","gyr y","gyr z","temperature","humidity","pressure"]
+};
+value(twmoninc(all_sensors(), 0.1, #'humidity_above', [30]));
+
+// **************************************
+// Exercise!
+// **************************************
+
+// 1. Experiment with different thresholds in the query above
+
+// 2. Write your own predicate function, eg. temperature_above
+// to change the logging condition
