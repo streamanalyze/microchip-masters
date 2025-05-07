@@ -1,0 +1,35 @@
+// **************************************
+// Demonstration deploy models
+// Examples of deployment of models and edge fusion
+// **************************************
+
+create function gravity_acceleration() -> Stream of Number
+  as select Stream of sqrt(sum(g .^ 2))
+       from Vector of Number g
+      where g in signal_stream("accelerometer");
+
+
+create function shake_state(Number threshold) -> Stream of Number
+  as select Stream of shakes
+       from Number shakes, Number elem
+      where elem in stdev(winagg(gravity_acceleration(), 25, 3))
+        and shakes = case when elem > threshold then 1
+                          else 0 end;
+
+create function humid_state(Number threshold) -> Stream of Number
+  as select Stream of shakes
+       from Number shakes, Number elem
+      where elem in signal_stream("humidity")
+        and shakes = case when elem[1] > threshold then 1
+                          else 0 end;
+
+Create function board_state(real humid_threashold, real acc_threashold)-> stream of vector
+  as select
+  changed(pivot([humid_state(humid_threashold), shake_state(acc_threashold)]));
+
+Create function board_status(real humid_threashold, real acc_threashold)->stream of vector
+ as select Stream of [timeval(rnow()),this_peerid(),sh]
+       from vector sh
+      where sh in board_state(humid_threashold,acc_threashold)
+
+

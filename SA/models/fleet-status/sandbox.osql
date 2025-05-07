@@ -1,0 +1,13 @@
+
+set :a =  [[1,2],[1,2],[1,2]];
+//plot: Bar plot
+[sum(transpose(:a)[1]),sum(transpose(:a)[2])];
+
+select [sum(t[1]),sum(t[2])] from vector of vector t where t = transpose(:a);
+
+
+create function hello(vector a, vector b) -> vector
+as a + b;
+
+reduce(in(:a),#'hello',[0,0]);
+ 
