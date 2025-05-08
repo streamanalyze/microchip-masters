@@ -78,3 +78,38 @@ value(twmoninc(all_sensors(), 0.1, #'humidity_above', [30]));
 
 // 2. Write your own predicate function, eg. temperature_above
 // to change the logging condition
+
+// **************************************
+// Lets make it a log
+// **************************************
+
+// So far, we looked at the output in an interactive window.
+// Output can be sent to the file system, or to external receiver eg. on mqtt
+
+// Use a standard logging function:
+doc("stream_logger");
+
+stream_logger(twmoninc(all_sensors(), 0.1, #'humidity_above', [30]),
+              'json', 
+              'my_log.json',
+              'new');
+
+// The log file is created where the query is running,
+// in this case on the SAMA board
+
+// It can be read with json:file_stream
+json:file_stream(log_filename('my_log.json'));
+
+// Plotting the recorded log:
+//plot: multi plot
+{
+  "sa_plots": [
+    {"sa_plot": "Line plot", "labels": ["acc x","acc y","acc z"]},
+    {"sa_plot": "Line plot", "labels": ["gyr x","gyr y","gyr z"]},
+    {"sa_plot": "Line plot", "labels": ["temperature"]},
+    {"sa_plot": "Line plot", "labels": ["humidity"]},
+    {"sa_plot": "Line plot", "labels": ["pressure"]}
+  ],
+  "labels": ["acc x","acc y","acc z","gyr x","gyr y","gyr z","temperature","humidity","pressure"]
+};
+value(cast(json:file_stream(log_filename('my_log.json')) as stream of timeval of vector));
