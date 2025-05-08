@@ -3,8 +3,6 @@
 // The detect shake model
 // **************************************
 
-// Run each query by plaving the curser on the query and press Shift-return
-
 // To verify that the edge device is connected we use listening_edges() function. 
 // Your edge device should be listed in the result.
 listening_edges();

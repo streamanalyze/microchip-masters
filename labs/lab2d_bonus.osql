@@ -3,7 +3,7 @@
 // Event-based logging with more flexibility
 // **************************************
 
-// Take a log at the model in SA/models/dynamic-log
+// Take a look at the model in SA/models/dynamic-log
 
 // In tw-flatten.osql you can see the implementation of the monotically increasing twinagg
 

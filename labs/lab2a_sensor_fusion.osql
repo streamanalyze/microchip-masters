@@ -41,4 +41,4 @@ flatten(pivot([signal_stream('accelerometer'), signal_stream('temperature')]));
 // Exercise!
 // **************************************
 
-// Create a plot that shows temperature, humidity and pressure in one graph
+// Create a plot that shows temperature, humidity and pressure
