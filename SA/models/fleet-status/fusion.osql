@@ -1,0 +1,18 @@
+create function fleet_status() -> Stream of Timeval of Vector of vector
+   as select pivot_events(edges, merged)
+        from Vector of Charstring edges, Stream of Vector merged
+       where edges = edges_with_signal("accelerometer")
+         and merged = edge_cq(edges, "board_status(22,0.4)");
+       
+
+
+create function fleet_statistics() -> stream of vector of real
+as select stream of [sum(v[1]),sum(v[2])] from matrix v, matrix w 
+where w in value(fleet_status())
+and v = transpose(w);
+
+
+//plot: Bar plot
+fleet_statistics();
+
+
