@@ -1,15 +1,25 @@
+// **************************************
+// Demonstration deploy models
+// Examples of deployment of models and edge fusion
+// **************************************
+
+models:deploy(edges_with_signal('accelerometer'), 
+             'fleet-status');
+
+
 create function fleet_status() -> Stream of Timeval of Vector of vector
-   as select pivot_events(edges, merged)
+   as select pivot_events(edges,new_vector(dim(edges),[0,0]), merged)
         from Vector of Charstring edges, Stream of Vector merged
        where edges = edges_with_signal("accelerometer")
          and merged = edge_cq(edges, "board_status(22,0.4)");
        
 
-
 create function fleet_statistics() -> stream of vector of real
 as select stream of [sum(v[1]),sum(v[2])] from matrix v, matrix w 
 where w in value(fleet_status())
 and v = transpose(w);
+
+
 
 
 //plot: Bar plot

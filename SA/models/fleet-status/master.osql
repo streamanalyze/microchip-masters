@@ -12,7 +12,7 @@ create function gravity_acceleration() -> Stream of Number
 create function shake_state(Number threshold) -> Stream of Number
   as select Stream of shakes
        from Number shakes, Number elem
-      where elem in stdev(winagg(gravity_acceleration(), 25, 3))
+      where elem in stdev(winagg(gravity_acceleration(), 20, 4))
         and shakes = case when elem > threshold then 1
                           else 0 end;
 
@@ -25,7 +25,9 @@ create function humid_state(Number threshold) -> Stream of Number
 
 Create function board_state(real humid_threashold, real acc_threashold)-> stream of vector
   as select
-  changed(pivot([humid_state(humid_threashold), shake_state(acc_threashold)]));
+  changed(pivot([humid_state(humid_threashold), shake_state(acc_threashold)],[0,0]));
+
+
 
 Create function board_status(real humid_threashold, real acc_threashold)->stream of vector
  as select Stream of [timeval(rnow()),this_peerid(),sh]

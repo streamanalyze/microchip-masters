@@ -1,0 +1,18 @@
+// **************************************
+// Demo 101
+// Examples of basic functions in OSQL
+// **************************************
+
+//Hello world of edge computing
+1+1;
+
+//synthetic streams
+//plot: Line plot
+simstream(0.01);
+
+//query using syntetic streams
+//plot: Line plot
+select sin(10*x) 
+  from real x 
+    where x in heartbeat(0.05);
+

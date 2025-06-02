@@ -14,3 +14,24 @@ reduce(in(:a),#'hello',[0,0]);
 
 
 
+models:deploy(edges_with_signal('accelerometer'), 
+             'fleet-status');
+
+
+
+//peer: edge05
+signals();
+
+//peer: edge05
+signal_stream("humidity");
+
+//plot: Line plot
+//peer: edge19
+signal_stream("accelerometer");
+
+
+
+//peer: edge19
+humid_state(40);
+
+
