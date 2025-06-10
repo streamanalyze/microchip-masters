@@ -23,11 +23,12 @@ shake_state(fake_accelerometer());
 
 shakes(fake_accelerometer());
 
-// To run a model at the edge, it is deployed
-models:deploy(["edge1"], "detect-shake");
+// To run a model at the edge, it is deployed using the models:deploy command.
+//Replace edge99 with the name of your edge e.g edge19
+models:deploy(["edge99"], "detect-shake");
 
 // Now run it:
-//peer: edge1
+//peer: my_edge
 shakes(signal_stream("accelerometer"));
 
 // **************************************

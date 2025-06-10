@@ -5,10 +5,12 @@
 
 // Consider our signals:
 
+//peer: my_edge
 create function all_sensors() -> stream of timeval of vector
 as ts(flatten(pivot([signal_stream('accelerometer'), signal_stream('gyroscope'), 
 signal_stream('temperature'),signal_stream('humidity'),signal_stream('pressure')])));
 
+//peer: my_edge
 //plot: multi plot
 {
   "sa_plots": [
@@ -29,34 +31,47 @@ value(all_sensors());
 
 // An example of a predicate function 
 // checks if the first signal is above a provided threshold
+//peer: my_edge
 create function my_predicate(timeval tv, vector params) -> boolean
   as value(tv)[1] > params[1];
 
 // Test: below 5 - returns null
+//peer: my_edge
 my_predicate(ts([2,1,1]), [5]);
 
 // Test: above 5 - returns True
+//peer: my_edge
 my_predicate(ts([7,1,1]), [5]);
 
 // in all_sensors(), humidity is the eigth column
 // create a predicate that checks if humidity is above threshold
+//peer: my_edge
 create function humidity_above(timeval of vector tv, vector params) -> boolean
   as value(tv)[8] > params[1];
 
 // Try running this query, and blowing on the humidity sensor
 // Notice we will only get windows when raising humidity
+//peer: my_edge
 twinagg(all_sensors(), 0.1, #'humidity_above', [30]);
 
 // Once humidity is above the threshold it will remain so for a while,
 // resulting in many windows with overlapping content
 // To flatten and reduce the windows, load functions from the dynamic-log model
 
+//If you are running this example on server. Deploy the model on the server
 models:load('dynamic-log');
+
+//deploy the model to your edge. Update the name of the edge in the command! e.g edge19
+models:deploy(["edge99"], "dynamic-log");
+
+
 
 // we can now use twinagg with monotically increasing timestamps:
 // duplicate entries are removed
+//peer: my_edge
 twmoninc(all_sensors(), 0.1, #'humidity_above', [30]);
 
+//peer: my_edge
 //plot: multi plot
 {
   "sa_plots": [
@@ -89,6 +104,7 @@ value(twmoninc(all_sensors(), 0.1, #'humidity_above', [30]));
 // Use a standard logging function:
 doc("stream_logger");
 
+//peer: my_edge
 stream_logger(twmoninc(all_sensors(), 0.1, #'humidity_above', [30]),
               'json', 
               'my_log.json',
@@ -98,9 +114,11 @@ stream_logger(twmoninc(all_sensors(), 0.1, #'humidity_above', [30]),
 // in this case on the SAMA board
 
 // It can be read with json:file_stream
+//peer: my_edge
 json:file_stream(log_filename('my_log.json'));
 
 // Plotting the recorded log:
+//peer: my_edge
 //plot: multi plot
 {
   "sa_plots": [

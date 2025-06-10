@@ -3,7 +3,14 @@
 // Sensor fusion with OSQL
 // **************************************
 
+// Use the my_edge alias to refer to the edge
+//Run this line if the alias is not already set
+//Update the edge99 to the name of your edge e.g edge19
+
+//map-peer: my_edge: edge99
+
 // Recall the available signals on the board
+//peer: my_edge
 signals();
 
 // As we did when detecting shakes, we can plot each signal
@@ -11,22 +18,27 @@ signals();
 // Note: it is recommended practice to stop a query before starting the next one
 // to limit the amount of parallel queries
 
+//peer: my_edge
 //plot: Line plot
 signal_stream('accelerometer');
 
+//peer: my_edge
 //plot: Line plot
-signal_stream('temperature');
+signal_stream('humidity');
 
 // To combine the signals from the sensors, use pivot
 // pivot will tranform a vector of streams into a stream of vectors
 // If one stream is slower than the other, values will be duplicated
+//peer: my_edge
 pivot([signal_stream('accelerometer'), signal_stream('temperature')]);
 
 // We can flatten the output to plot the signals in the same graph
+//peer: my_edge
 //plot: line plot
 flatten(pivot([signal_stream('accelerometer'), signal_stream('temperature')]));
 
 // Or use a multiplot 
+//peer: my_edge
 //plot: multi plot
 {
   "sa_plots": [

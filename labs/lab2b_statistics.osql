@@ -6,6 +6,7 @@
 // Continous queries enables operations on each element of infinite streams:
 
 // Gravity acceleration query:
+//peer: my_edge
 //plot: Line plot
 select Stream of sqrt(sum(g .^ 2))
        from Vector of Number g
@@ -16,17 +17,20 @@ select Stream of sqrt(sum(g .^ 2))
 // with size and stride defined in seconds.
 
 // A tumbling window
+//peer: my_edge
 select a
 from timeval of vector a
 where a in twinagg(ts_signal_stream("accelerometer"), 0.1, 0.1);
 
 // a sliding window
+//peer: my_edge
 select a
 from timeval of vector a
 where a in twinagg(ts_signal_stream("accelerometer"), 0.2, 0.1);
 
 // transposing the value gives one vector for each direction [x,x,x],[y,y,y],[z,z,z], 
 // rather than vectors of [x,y,z],[x,y,z],[x,y,z]
+//peer: my_edge
 select t
 from timeval of vector a, matrix vv, matrix t
 where a in twinagg(ts_signal_stream("accelerometer"), 0.2, 0.1)
@@ -34,6 +38,7 @@ and vv = value(a)
 and t = transpose(vv);
 
 // by calculating the average in each dimension, we get a sliding average - a smoothing
+//peer: my_edge
 //plot: Line plot
 select avg(t[1]),avg(t[2]),avg(t[3])
 from timeval of vector a, matrix vv, matrix t

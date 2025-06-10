@@ -12,16 +12,30 @@ listening_edges();
 edge_cq("edge1", "1+1");
 
 
-// Let's use a simpler form using peer
-//peer: edge1
+// we can also use a simpler form using //peer: edgename
+//Replace edge99 with your edge device name e.g edge19
+//peer: edge99
 1+1;
 
+//We can also use the "my_edge" alias functionality
+//set the alias to the edge device name on the form 
+//map-peer: my_edge: edgename
+
+//Replace edge99 with your edge device name e.g edge19
+//put your curser on the line below and press shift-Enter
+//map-peer: my_edge: edge99
+
+//We can now use peer:my_edge to access the edge device
+//peer: my_edge
+1+1;
+
+
 // Check for available sensor on the edge device
-//peer: edge1
+//peer: my_edge
 signals();
 
 // We can use signal_stream('accelerometer') to display the accelerometer stream.
-//peer: edge1
+//peer: my_edge
 //plot: Line plot
 signal_stream('accelerometer');
 
@@ -29,26 +43,26 @@ signal_stream('accelerometer');
 // Develop the model
 
 // Create a function to 
-//peer: edge1
+//peer: my_edge
 create function gravity_acceleration() -> Stream of Number
   as select Stream of sqrt(sum(g .^ 2))
        from Vector of Number g
       where g in signal_stream("accelerometer");
 
-//peer: edge1
+//peer: my_edge
 //plot: Line plot
 gravity_acceleration();
 
 
 // Create "a window" over the stream and compute the standard deviation 
-//peer: edge1
+//peer: my_edge
 //plot: Line plot
 stdev(winagg(gravity_acceleration(), 50, 5));
 
 
 // Now we use the stddev() expression to create a function that signals 
 // if the shaking is above some threshold
-//peer:edge1
+//peer: my_edge
 create function shake_state(Number threshold) -> Stream of Number
   as select Stream of shakes
        from Number shakes, Number elem
@@ -58,25 +72,25 @@ create function shake_state(Number threshold) -> Stream of Number
 
 
 
-//peer: edge1
+//peer: my_edge
 //plot: Line plot
 shake_state(5);
 
 
-//peer: edge1
+//peer: my_edge
 create function shakes(Number threshold) -> Stream of Number
   as changed(shake_state(threshold));
 
-//peer: edge1
+//peer: my_edge
 shakes(5);
 
 
 // Let's add som post processing
-//peer: edge1
+//peer: my_edge
 create function detect_shake(Number threshold) -> Stream of Vector
   as select Stream of [timeval(rnow()),this_peerid(),sh]
        from Number sh
       where sh in shakes(threshold);
 
-//peer: edge1
+//peer: my_edge
 detect_shake(5)

@@ -1,5 +1,12 @@
 // helper functions //////////////////////////////////////////////////////
 
+//if using version 6.0.3 or older
+create function rmax(Stream s) -> Stream
+/* Return the maximum element from a stream. */
+  as reduce(s, #'object.object.max->object', 0);
+set_resulttypes("rmax", "first-resulttypes");
+
+
 create function rlargest(Stream s) -> Stream
 /* Output every time a new max is found in the stream. */
   as changed(rmax(s));
