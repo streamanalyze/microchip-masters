@@ -24,3 +24,5 @@ create sama:signal (name, options)
 for each sama:signal s {
   set ts_signal_stream(s) = sama_stream(s);
 };
+
+select signal_stream("accelerometer") limit 4;

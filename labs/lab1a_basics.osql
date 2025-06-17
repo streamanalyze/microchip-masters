@@ -66,3 +66,6 @@ select Stream of x
   from Number x
  where x in simstream(0.01)
    and x > 0.7;
+
+//This is a continues query, it will continue to run until you stop it.
+//Stop the query by pressing the stop button when you are done.

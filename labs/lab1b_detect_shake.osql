@@ -9,10 +9,12 @@ listening_edges();
 
 
 // Send a query to the edge using edge_cq()
-edge_cq("edge1", "1+1");
+//edge_cq("edgename","query");
+//Replace edge99 with your edge device name e.g edge19;
+edge_cq("edge99", "1+1");
 
 
-// we can also use a simpler form using //peer: edgename
+// we can use a simpler form using //peer: edgename
 //Replace edge99 with your edge device name e.g edge19
 //peer: edge99
 1+1;
@@ -20,6 +22,7 @@ edge_cq("edge1", "1+1");
 //We can also use the "my_edge" alias functionality
 //set the alias to the edge device name on the form 
 //map-peer: my_edge: edgename
+//This can also be done in the settings json-file
 
 //Replace edge99 with your edge device name e.g edge19
 //put your curser on the line below and press shift-Enter
@@ -39,10 +42,12 @@ signals();
 //plot: Line plot
 signal_stream('accelerometer');
 
+//Shake the board!
+
 
 // Develop the model
 
-// Create a function to 
+// Create a function to calculate the magnitude of the acceleration.
 //peer: my_edge
 create function gravity_acceleration() -> Stream of Number
   as select Stream of sqrt(sum(g .^ 2))
@@ -54,7 +59,8 @@ create function gravity_acceleration() -> Stream of Number
 gravity_acceleration();
 
 
-// Create "a window" over the stream and compute the standard deviation 
+// Create "a window" over the stream and compute the standard deviation
+// We will talk more about winagg in lab2 
 //peer: my_edge
 //plot: Line plot
 stdev(winagg(gravity_acceleration(), 50, 5));
@@ -74,7 +80,7 @@ create function shake_state(Number threshold) -> Stream of Number
 
 //peer: my_edge
 //plot: Line plot
-shake_state(5);
+shake_state(0.2);
 
 
 //peer: my_edge
@@ -82,7 +88,7 @@ create function shakes(Number threshold) -> Stream of Number
   as changed(shake_state(threshold));
 
 //peer: my_edge
-shakes(5);
+shakes(0.2);
 
 
 // Let's add som post processing
@@ -93,4 +99,4 @@ create function detect_shake(Number threshold) -> Stream of Vector
       where sh in shakes(threshold);
 
 //peer: my_edge
-detect_shake(5)
+detect_shake(0.2)

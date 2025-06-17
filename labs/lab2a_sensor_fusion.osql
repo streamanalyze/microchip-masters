@@ -26,6 +26,8 @@ signal_stream('accelerometer');
 //plot: Line plot
 signal_stream('humidity');
 
+//Try to blow on the sensor!
+
 // To combine the signals from the sensors, use pivot
 // pivot will tranform a vector of streams into a stream of vectors
 // If one stream is slower than the other, values will be duplicated
