@@ -82,7 +82,8 @@ create function shake_state(Number threshold) -> Stream of Number
 //plot: Line plot
 shake_state(0.2);
 
-
+//Use the function changed() to only send data
+//when the status changes
 //peer: my_edge
 create function shakes(Number threshold) -> Stream of Number
   as changed(shake_state(threshold));

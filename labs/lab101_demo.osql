@@ -16,3 +16,6 @@ select sin(10*x)
   from real x 
     where x in heartbeat(0.05);
 
+//Stop a continues query when you are done.
+//Press the stop button
+
