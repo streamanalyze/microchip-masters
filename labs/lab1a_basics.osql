@@ -58,6 +58,8 @@ select sin(10*x)
  where x in heartbeat(0.05)
  limit 100;
 
+//predefined simulated stream
+//plot: Line plot
 select simstream(0.1) limit 100;
 
 // a CQ that acts as a filter

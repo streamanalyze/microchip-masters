@@ -5,12 +5,10 @@
 
 // Continous queries enables operations on each element of infinite streams:
 
-// Gravity acceleration query:
+// Raw acceleration data:
 //peer: my_edge
 //plot: Line plot
-select Stream of sqrt(sum(g .^ 2))
-       from Vector of Number g
-      where g in signal_stream("accelerometer");
+signal_stream("accelerometer");
 
 // To do operations, such as caluclating statistics, on several elements
 // windows can be used. The function twinagg created a time-based window

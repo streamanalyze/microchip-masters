@@ -4,7 +4,7 @@
 // **************************************
 
 // Use the my_edge alias to refer to the edge
-//Run this line if the alias is not already set
+//Run the map-peer line below if the alias is not already set
 //Update the edge99 to the name of your edge e.g edge19
 
 //map-peer: my_edge: edge99

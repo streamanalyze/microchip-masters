@@ -11,7 +11,7 @@ create function fleet_status() -> Stream of Timeval of Vector of vector
    as select pivot_events(edges,new_vector(dim(edges),[0,0]), merged)
         from Vector of Charstring edges, Stream of Vector merged
        where edges = edges_with_signal("accelerometer")
-         and merged = edge_cq(edges, "board_status(22,0.4)");
+         and merged = edge_cq(edges, "board_status(45,0.2)");
        
 
 create function fleet_statistics() -> stream of vector of real
