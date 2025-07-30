@@ -52,7 +52,7 @@ create function humidity_above(timeval of vector tv, vector params) -> boolean
 // Try running this query, and blowing on the humidity sensor
 // Notice we will only get windows when raising humidity
 //peer: my_edge
-twinagg(all_sensors(), 0.1, #'humidity_above', [30]);
+twinagg(all_sensors(), 0.1, #'humidity_above', [45]);
 
 // Once humidity is above the threshold it will remain so for a while,
 // resulting in many windows with overlapping content
