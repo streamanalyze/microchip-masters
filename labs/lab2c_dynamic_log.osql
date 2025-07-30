@@ -59,7 +59,7 @@ twinagg(all_sensors(), 0.1, #'humidity_above', [30]);
 // To flatten and reduce the windows, load functions from the dynamic-log model
 
 //If you are running this example on server. Deploy the model on the server
-models:load('dynamic-log');
+//models:load('dynamic-log');
 
 //deploy the model to your edge. Update the name of the edge in the command! e.g edge19
 models:deploy(["edge99"], "dynamic-log");
@@ -69,7 +69,7 @@ models:deploy(["edge99"], "dynamic-log");
 // we can now use twinagg with monotically increasing timestamps:
 // duplicate entries are removed
 //peer: my_edge
-twmoninc(all_sensors(), 0.1, #'humidity_above', [30]);
+twmoninc(all_sensors(), 0.1, #'humidity_above', [45]);
 
 //peer: my_edge
 //plot: multi plot
@@ -83,7 +83,7 @@ twmoninc(all_sensors(), 0.1, #'humidity_above', [30]);
   ],
   "labels": ["acc x","acc y","acc z","gyr x","gyr y","gyr z","temperature","humidity","pressure"]
 };
-value(twmoninc(all_sensors(), 0.1, #'humidity_above', [30]));
+value(twmoninc(all_sensors(), 0.1, #'humidity_above', [45]));
 
 // **************************************
 // Exercise!
@@ -105,7 +105,7 @@ value(twmoninc(all_sensors(), 0.1, #'humidity_above', [30]));
 doc("stream_logger");
 
 //peer: my_edge
-stream_logger(twmoninc(all_sensors(), 0.1, #'humidity_above', [30]),
+stream_logger(twmoninc(all_sensors(), 0.1, #'humidity_above', [45]),
               'json', 
               'my_log.json',
               'new');
