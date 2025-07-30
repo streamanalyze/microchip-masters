@@ -1,0 +1,16 @@
+//Install helper2
+//copy the configuration blob to the SAMA board
+//Find your designated board name e.g EDGE19
+
+//Use scp to transfer the file. All configuration blobs are in the folder "tokens"
+scp edge19.osql root@10.0.0.41:/root/masters
+
+//use ssh to access the board
+
+ssh root@10.0.0.41
+
+cd root/masters
+
+export PATH=$PATH:/root/masters/sa.engine/bin
+
+sa.engine edge19.osql
