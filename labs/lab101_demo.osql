@@ -19,3 +19,5 @@ select sin(10*x)
 //Stop a continues query when you are done.
 //Press the stop button
 
+//More information and guides
+//https://studio.streamanalyze.com/docs/guides/general-guides/intro/
