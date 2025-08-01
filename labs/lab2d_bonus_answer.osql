@@ -15,7 +15,7 @@
 // and outputs a stream of every second number from the stream.
 
 create function problem4(stream of number s) -> stream of vector
-  as /* Write your solution here */
+  as winagg(s,1,2)
 ;
 
 validate "problem 4"
@@ -28,7 +28,8 @@ validate "problem 4"
 
 create function problem4_2(stream of number s) -> stream of number
   as /* Write your solution here */
-
+  select mean(winagg(s,5,1))
 ;
+
 validate "problem 4-2"
   check extract(problem4_2(vstream([1,1,1,1,1,2,2,2,2,2]))) => bag(1,1.2,1.4,1.6,1.8,2);

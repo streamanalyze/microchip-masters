@@ -1,0 +1,97 @@
+// **************************************
+// Lab session 1c (BONUS SESSION)
+// Organize OSQL in models
+// **************************************
+
+// When using OSQL in production, analysis functions are organized in models
+// Take a look at models/detect_shake for an example
+// It contains the shake detection as well as simulation functions that enable unit testing
+
+// Load the model to make the function in it available
+// Loading a model will execute its master.osql file
+models:load('detect-shake');
+
+// Run the model by calling any of the loaded functions
+
+//plot: line plot
+fake_accelerometer();
+
+//plot: line plot
+gravity_acceleration(fake_accelerometer());
+
+shake_state(fake_accelerometer());
+
+shakes(fake_accelerometer());
+
+// To run a model at the edge, it is deployed using the models:deploy command.
+//Replace edge99 with the name of your edge e.g edge19
+models:deploy(["edge99"], "detect-shake");
+
+// Now run it:
+//peer: my_edge
+shakes(signal_stream("accelerometer"));
+
+// **************************************
+// OSQL Exercises: Queries and Streams
+// **************************************
+
+// This section contains exercises for learning to write your own queries
+// More reading about queries is available at
+// https://studio.streamanalyze.com/docs/guides/tutorial/queries
+
+// Create a function problem1() 
+// that takes a vector of integers 
+// and returns the vector with all integers divisible by three removed.
+
+create function problem1(vector of integer v) -> vector of integer
+  as /* Write your solution here */
+  select vector of n from integer n
+  where n in v
+  and mod(n,3) !=0 ; 
+;
+
+// Run this validate unit test to verify that your solution is correct
+validate "problem 1"
+  check problem1([1,2,3,4,5,6]) => [1,2,4,5]
+  check problem1([10,20,30,40]) => [10,20,40];
+
+// Create a function problem2() 
+// that takes an integer 
+// and checks if it is outside the interval [5,10]. 
+// That is, it should return the integer if it is less than 5 or greater than 10, 
+// otherwise it should not return anything.
+
+create function problem2(integer i) -> integer
+  as /* Write your solution here */
+  select i where 
+  i<5 or i>10
+;
+
+validate "problem 2"
+  check problem2(3) => 3
+  check problem2(4) => 4
+  check problem2(5) => null
+  check problem2(6) => null
+  check problem2(9) => null
+  check problem2(10) => null
+  check problem2(11) => 11
+  check problem2(12) => 12;
+
+// The third problem asks you to write a query that works on a stream
+// - a continous query
+// More reading about streams is available at
+// https://studio.streamanalyze.com/docs/guides/tutorial/streams
+
+// Create a function 'problem3()' 
+// that takes a a stream of numbers 
+// and only emits the numbers that are less than 10.
+
+create function problem3(stream of number s) -> stream of number
+  as /* Write your solution here */
+  select streamof(n) from number n where 
+  n in s and n<10;
+;
+
+validate "problem 3"
+  check extract(problem3(vstream([1,2,3,4,5,6,7,8,9,10,11,12,13,14])))
+          => bag(1,2,3,4,5,6,7,8,9);
