@@ -1,0 +1,2 @@
+load_osql("SAMA_signals.osql");
+edge_listener("edge00@10.0.0.10");
